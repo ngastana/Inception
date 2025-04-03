@@ -1,0 +1,4 @@
+# Ignorar directorios no necesarios
+*.log
+*.md
+*.bak

@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  mariadb: #software que orgaiza esos datos y permite interactuar con ellos de manera estructurada (texto autor fecha comentarios)
+    container_name: mariadb
+    build: ./requirements/mariadb
+    image: mariadb
+    restart: always 
+    expose: #solo accesible el puerto a otros contenedores dentro de la misma red, si pongo ports tambien sistema anfitrión (host)
+      - 3306 # solo debe ser accesible por wordpress
+    volumes:
+      - DB_Volume:/var/lib/mysql #asi los datos se conservan, incluso si se elimina
+    networks:
+      - DockerNet
+    env_file: #si uso enviroment tengo que poner la definición de cada uno, aunque sea mencionar lo que pone en .env 
+      - .env
+
+  wordpress:
+    container_name: wordpress
+    depends_on:
+      - mariadb
+    build: ./requirements/wordpress
+    image: wordpress
+    restart: always
+    expose: 
+      -9000 #NGINX envia las peticiones a este puerto para que PHP-FPM las procese. NGINX escucha el puerto 80 o 442 y reenvia la peticion a PHP-FPM. SOLO ACCSIBLE DESDE OS CONTENEDORES (no desde el host)
+#    ports:
+#      - "8080:80" Si lo quiero exponer al navegador
+    volumes:
+      -WP_Volume:/var/www/html #se guardan aunque el contenedor se elimine: /var/lib/docker/volumes/WP_Volume/_data/, y aqui se guardan wp-config.php, themes, plugins, una imagen...
+    networks:
+      - DockerNet #en vez de usar su IP se pueden comuicar entre si usando mariadb
+    env_file:
+      - .env
+
+  nginx:
+    container_name: nginx
+    depend on:
+      - wordpress
+    build: ./requirements/nginx
+    image: nginx
+    restart: always
+    expose:
+      - "443:443" #puedo acceder a WordPress desde mi navegador con https:, 443 estandar
+    volumes:
+      - WP_Volume:/var/www/html
+    networks:
+      - DockerNet
+
+volumes:
+  WP_Volume:
+    driver: local
+    driver_opts:
+      type: volume #se puede quitar, volumen tipo estandar
+      device: /home/ngastana/data/wordpress
+      o: bind
+  DB_Volume:
+    driver: local
+    driver_opts:
+      type: volume
+      device: /home/ngastana/data/mariadb
+      o: bind #no se maneja internamente por docker sino que se vincula directamente a un idrectorio especifico en tu host
+              #puedo hacer cosas sin tener que interactuar con Docker
+network:
+  DockerNet:
+    driver: bridge #red virtual aislada
