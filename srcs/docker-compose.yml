@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.9'
 
 services:
   mariadb: #software que orgaiza esos datos y permite interactuar con ellos de manera estructurada (texto autor fecha comentarios)

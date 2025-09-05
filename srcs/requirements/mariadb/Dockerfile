@@ -1,25 +1,21 @@
-FROM mariadb:11.7
+FROM debian:bullseye
+
+ENV DEBIAN_FRONTEND=noninteractive
 
 COPY ./conf /tmp/
 
-RUN apt-get update
-RUN apt-get -y install mariadb-server
-RUN service mariadb start
-RUN chmod +x /tmp/create.sh
-RUN chmod +x /tmp/init.sh
+RUN apt-get update \
+    && apt-get install -y mariadb-server \
+    && rm -rf /var/lib/apt/lists/* \
+    && mkdir -p /run/mysqld \
+    && chown mysql:mysql /run/mysqld \
+    && chmod +x /tmp/init.sh /tmp/create.sh
 
-RUN /tmp/init.sh
+VOLUME /var/lib/mysql
+EXPOSE 3306
 
-EXPOSE 3306  
-#estara escuchando este puerto para conexionaes entrantes
-#puerto estandar de MariaDB
-
-#CMD es na instruccion que se da cunado el docker se levante
-#sh intérprete de comandos shell  en Bash
-#-c que ejecute comando que le sigue como una cadena de texto
-CMD [ "sh", "-c", "./tmp/create.sh > /tmp/create.sql && mysqld --init-file=/tmp/create.sql"]
-#mysqld comando que inicia el servicio de bases de datos de MariaDB proceso principal)
-#mysql se utiliza para interactuar con la base de datos, manejar las bases de datos d manera interactiva
-#mysqldump para hacer copias de seguridad de las bases de datos
-
-#--init-file: cuando se inicie ejecute
+# Cuando arranque el contenedor:
+# 1. Ejecuta init.sh (puede crear usuarios o preparar entorno)
+# 2. Genera el SQL con create.sh
+# 3. Arranca MariaDB con ese SQL como init
+CMD [ "sh", "-c", "/tmp/init.sh && /tmp/create.sh > /tmp/create.sql && exec mysqld --init-file=/tmp/create.sql" ]
