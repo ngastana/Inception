@@ -1,9 +1,22 @@
-#SERVIDOR
+FROM debian:12
 
-FROM nginx:1.27.4
+ENV DEBIAN_FRONTEND=noninteractive
 
-COPY ./conf /etc/nginx/nginx.conf
+#con 80 estariamos en un HTTP pero con 443 es un HTTPS, esto hace que sea necesitas configurar SSL
+RUN apt-get update && apt-get install -y nginx openssl && apt-get clean
 
-COPY ./tools/ /usr/share/nginx/html
+# Crear directorio para los certificados
+RUN mkdir -p /etc/nginx/ssl
 
-EXPOSE 80
+# Generar certificado autofirmado (válido 365 días, CN=localhost)
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -keyout /etc/nginx/ssl/ngastana.key \
+    -out /etc/nginx/certs/ngastana.crt \
+    -subj "/CN=ngastana.42.fr"
+
+COPY ./conf /tmp/
+
+EXPOSE 443
+
+#para  ejecutar nginx. Le decimos daemon off porque no queremos que se quede en segundo plano y se cierre, sino que se quede en primer plano para que el contenedor no se cierre. Si Nginx se ejecuta en segundo plano, docker piensa que ha terminado y para
+CMD ["nginx", "-g", "daemon off;"]
