@@ -11,10 +11,11 @@ RUN mkdir -p /etc/nginx/ssl
 # Generar certificado autofirmado (válido 365 días, CN=localhost)
 RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
     -keyout /etc/nginx/ssl/ngastana.key \
-    -out /etc/nginx/certs/ngastana.crt \
+    -out /etc/nginx/ssl/ngastana.crt \
     -subj "/CN=ngastana.42.fr"
 
-COPY ./conf /tmp/
+COPY ./conf/nginx.conf /etc/nginx/conf.d/default.conf
+COPY ./tools/index.html /var/www/html/index.html
 
 EXPOSE 443
 

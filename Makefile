@@ -24,10 +24,11 @@ $(RED)
 endef
 export	ART
 
-all: up
+all:
+	docker-compose -f srcs/docker-compose.yml  up -d --build
 
 build:
-	docker compose -f srcs/dockerr-compose.yml build
+	docker compose -f srcs/docker-compose.yml build --no-cache
 
 up:
 	docker compose -f srcs/docker-compose.yml up -d
