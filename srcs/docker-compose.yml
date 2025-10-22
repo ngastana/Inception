@@ -1,3 +1,5 @@
+version: '3.3'
+
 services:
   mariadb: #software que orgaiza esos datos y permite interactuar con ellos de manera estructurada (texto autor fecha comentarios)
     container_name: mariadb
@@ -7,14 +9,14 @@ services:
     #ports:
      # - "3306:3306"
     restart: always 
-    #expose: #solo accesible el puerto a otros contenedores dentro de la misma red, si pongo ports tambien sistema anfitrión (host)
-     # - 3306 # solo debe ser accesible por wordpress
+    expose: #solo accesible el puerto a otros contenedores dentro de la misma red, si pongo ports tambien sistema anfitrión (host)
+     - 3306 # solo debe ser accesible por wordpress
     env_file: #si uso enviroment tengo que poner la definición de cada uno, aunque sea mencionar lo que pone en .env 
       - .env
     volumes:
       - DB_Volume:/var/lib/mysql #asi los datos se conservan, incluso si se elimina
     networks:
-      - network
+      - docker-network
 
 
   wordpress:
@@ -25,8 +27,8 @@ services:
       context: ./requirements/wordpress
       dockerfile: Dockerfile
     restart: always
-    #expose: 
-     # - 9000 #NGINX envia las peticiones a este puerto para que PHP-FPM las procese. NGINX escucha el puerto 80 o 442 y reenvia la peticion a PHP-FPM. SOLO ACCSIBLE DESDE OS CONTENEDORES (no desde el host)
+    expose: 
+     - 9000 #NGINX envia las peticiones a este puerto para que PHP-FPM las procese. NGINX escucha el puerto 80 o 442 y reenvia la peticion a PHP-FPM. SOLO ACCSIBLE DESDE OS CONTENEDORES (no desde el host)
 #    ports:
 #      - "8080:80" Si lo quiero exponer al navegador
     env_file:
@@ -34,23 +36,25 @@ services:
     volumes:
       - WP_Volume:/var/www/html #se guardan aunque el contenedor se elimine: /var/lib/docker/volumes/WP_Volume/_data/, y aqui se guardan wp-config.php, themes, plugins, una imagen...
     networks:
-      - network #en vez de usar su IP se pueden comuicar entre si usando mariadb
+      - docker-network #en vez de usar su IP se pueden comuicar entre si usando mariadb
 
   nginx:
     container_name: nginx
     # depend on:
     #   - wordpress
-    build: ./requirements/nginx
+    build:
+      context: ./requirements/nginx
+      dockerfile: Dockerfile
     #solo root puede abrir puertos menores a 1024
     ports:
       - "443:443"
     restart: always
     #expose:
-     # - 443 #puedo acceder a WordPress desde mi navegador con https:, 443 estandar
+      #- 443 #puedo acceder a WordPress desde mi navegador con https:, 443 estandar
     volumes:
       - WP_Volume:/var/www/html
     networks:
-      - network
+      - docker-network
     #env_file:
      # - .env
 
@@ -59,14 +63,14 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: ./requirements/wordpress
+      device: ${PWD}/srcs/requirements/wordpress/data
       o: bind
   DB_Volume:
     driver: local
     driver_opts:
       type: none
-      device: ./requirements/mariadb
+      device: ${PWD}/srcs/requirements/mariadb/data
       o: bind
 networks:
-  network:
+  docker-network:
     driver: bridge #red virtual aislada

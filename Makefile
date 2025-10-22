@@ -25,7 +25,7 @@ endef
 export	ART
 
 all:
-	mkdir -p 
+	@echo "$$ART"
 	docker-compose -f srcs/docker-compose.yml up --build
 
 build:
@@ -41,13 +41,15 @@ ps:
 	docker-compose -f srcs/docker-compose.yml ps
 
 logs:
-	docker-compose -f srcs/docker-compose.yml logs -fclean
+	docker-compose -f srcs/docker-compose.yml logs -f
 
 clean: down
+	@echo "$(YELLOW)🧹 Limpiando entorno de INCEPTION...$(CLR_RMV)"
+	docker compose srcs/docker-compose.yml down -v || true
 	docker system prune -af --volumes
+	docker volume rm srcs_WP_Volume
+	docker volume rm srcs_DB_Volume
 
 re: clean build up
 
 .PHONY: all clean fclean re
-
-                                                                                   
