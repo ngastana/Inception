@@ -26,6 +26,10 @@ export	ART
 
 all:
 	@echo "$$ART"
+	mkdir -p srcs/requirements/mariadb/data
+	mkdir -p srcs/requirements/wordpress/data
+	sudo chown -R $(USER):$(USER) srcs/requirements/mariadb/data
+	sudo chown -R $(USER):$(USER) srcs/requirements/wordpress/data
 	docker-compose -f srcs/docker-compose.yml up --build
 
 build:
@@ -49,6 +53,10 @@ clean: down
 	docker system prune -af --volumes
 	docker volume rm srcs_WP_Volume
 	docker volume rm srcs_DB_Volume
+	sudo chown -R $(USER):$(USER) srcs/requirements/mariadb/data
+	sudo chown -R $(USER):$(USER) srcs/requirements/wordpress/data
+	sudo rm -rf srcs/requirements/mariadb/data/* 
+	sudo rm -rf srcs/requirements/wordpress/data/*
 
 re: clean build up
 
