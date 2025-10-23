@@ -29,8 +29,6 @@ services:
     restart: always
     expose: 
      - 9000 #NGINX envia las peticiones a este puerto para que PHP-FPM las procese. NGINX escucha el puerto 80 o 442 y reenvia la peticion a PHP-FPM. SOLO ACCSIBLE DESDE OS CONTENEDORES (no desde el host)
-#    ports:
-#      - "8080:80" Si lo quiero exponer al navegador
     env_file:
       - .env
     volumes:

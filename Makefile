@@ -25,12 +25,15 @@ endef
 export	ART
 
 all:
-	@echo "$$ART"
+	@echo "$(YELLOW)⌛ Creando carpetas mariadb y wordpress ⌛$(CLR_RMV)"
 	mkdir -p srcs/requirements/mariadb/data
 	mkdir -p srcs/requirements/wordpress/data
 	sudo chown -R $(USER):$(USER) srcs/requirements/mariadb/data
 	sudo chown -R $(USER):$(USER) srcs/requirements/wordpress/data
+	sudo chown -R 999:999 srcs/requirements/mariadb/data
+	@echo "$(YELLOW)🚀 docker-compose up --build.... 🚀$(CLR_RMV)"
 	docker-compose -f srcs/docker-compose.yml up --build
+	@echo "$$ART"
 
 build:
 	docker-compose -f srcs/docker-compose.yml build --no-cache
@@ -51,8 +54,8 @@ clean: down
 	@echo "$(YELLOW)🧹 Limpiando entorno de INCEPTION...$(CLR_RMV)"
 	docker compose srcs/docker-compose.yml down -v || true
 	docker system prune -af --volumes
-	docker volume rm srcs_WP_Volume
-	docker volume rm srcs_DB_Volume
+	docker volume rm srcs_WP_Volume || true
+	docker volume rm srcs_DB_Volume || true
 	sudo chown -R $(USER):$(USER) srcs/requirements/mariadb/data
 	sudo chown -R $(USER):$(USER) srcs/requirements/wordpress/data
 	sudo rm -rf srcs/requirements/mariadb/data/* 
