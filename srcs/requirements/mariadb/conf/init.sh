@@ -1,14 +1,14 @@
 #!/bin/bash
 set -e
 
-echo ">>> Ejecutando init.sh"
+echo ">>> 👾 Ejecutando init.sh"
 
 if [ -d "/var/lib/mysql/mysql" ]; then
-    echo ">>> Base de datos ya inicializada, saltando init.sh"
+    echo ">>> 👻 Base de datos ya inicializada, saltando init.sh"
     exit 0
 fi
 
-echo ">>> Inicializando directorio de datos..."
+echo ">>> 👾 Inicializando directorio de datos..."
 mysql_install_db --user=mysql --ldata=/var/lib/mysql > /dev/null
 
 # Variables de entorno (si no se definen en .env, asigna valores por defecto)
@@ -20,4 +20,4 @@ mysql_install_db --user=mysql --ldata=/var/lib/mysql > /dev/null
 # Llamamos a create.sh para generar el SQL de inicialización
 /tmp/create.sh "$MARIADB_ROOT_PASSWORD" "$MARIADB_DATABASE" "$MARIADB_USER" "$MARIADB_PASSWORD" > /tmp/create.sql
 
-echo ">>> init.sh completado, listo para arrancar MariaDB"
+echo ">>> ✅ init.sh completado, listo para arrancar MariaDB"

@@ -4,7 +4,7 @@ DB_NAME=$2
 DB_USER=$3
 DB_PASS=$4
 
-echo ">>> Generando create.sql con parámetros recibidos" >&2
+echo ">>> 👾 Generando create.sql con parámetros recibidos" >&2
 
 cat <<EOF
 -- Configurar usuario root

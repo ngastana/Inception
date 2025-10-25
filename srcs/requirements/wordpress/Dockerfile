@@ -25,5 +25,10 @@ RUN chown -R www-data:www-data /var/www/html && \
 # Exponer puerto 9000 para PHP-FPM
 EXPOSE 9000
 
-# Ejecutar PHP-FPM en primer plano
-CMD ["php-fpm8.2", "-F"]
+
+# Copiar script de inicialización
+COPY ./conf/init-wordpress.sh /usr/local/bin/init-wordpress.sh
+RUN chmod +x /usr/local/bin/init-wordpress.sh
+
+# Ejecutar script al inicio
+CMD ["init-wordpress.sh"]

@@ -6,23 +6,33 @@ services:
     build: 
       context: ./requirements/mariadb
       dockerfile: Dockerfile
+    secrets:
+      - db_root_password
+      - db_password
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: /run/secrets/db_root_password
+      MYSQL_PASSWORD: /run/secrets/db_password
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
     #ports:
-     # - "3306:3306"
+     #- "3306:3306"
     restart: always 
     expose: #solo accesible el puerto a otros contenedores dentro de la misma red, si pongo ports tambien sistema anfitrión (host)
      - 3306 # solo debe ser accesible por wordpress
-    env_file: #si uso enviroment tengo que poner la definición de cada uno, aunque sea mencionar lo que pone en .env 
-      - .env
     volumes:
       - DB_Volume:/var/lib/mysql #asi los datos se conservan, incluso si se elimina
     networks:
       - docker-network
 
-
   wordpress:
     container_name: wordpress
     depends_on:
       - mariadb
+    secrets:
+      - db_root_password
+      - db_password
     build: 
       context: ./requirements/wordpress
       dockerfile: Dockerfile
@@ -31,6 +41,11 @@ services:
      - 9000 #NGINX envia las peticiones a este puerto para que PHP-FPM las procese. NGINX escucha el puerto 80 o 442 y reenvia la peticion a PHP-FPM. SOLO ACCSIBLE DESDE OS CONTENEDORES (no desde el host)
     env_file:
       - .env
+    environment:
+      WORDPRESS_DB_HOST: ${MYSQL_HOST}:3306
+      WORDPRESS_DB_USER: ${MYSQL_USER}
+      WORDPRESS_DB_PASSWORD_FILE: /run/secrets/db_password
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
     volumes:
       - WP_Volume:/var/www/html #se guardan aunque el contenedor se elimine: /var/lib/docker/volumes/WP_Volume/_data/, y aqui se guardan wp-config.php, themes, plugins, una imagen...
     networks:
@@ -38,8 +53,8 @@ services:
 
   nginx:
     container_name: nginx
-    # depend on:
-    #   - wordpress
+    depends_on:
+     - wordpress
     build:
       context: ./requirements/nginx
       dockerfile: Dockerfile
@@ -56,18 +71,24 @@ services:
     #env_file:
      # - .env
 
+secrets:
+  db_root_password:
+    file: ../secrets/db_root_password.txt
+  db_password:
+    file: ../secrets/db_password.txt
+
 volumes:
   WP_Volume:
     driver: local
     driver_opts:
       type: none
-      device: ${PWD}/srcs/requirements/wordpress/data
+      device: /home/ngastana/Escritorio/githubincep/srcs/requirements/wordpress/data
       o: bind
   DB_Volume:
     driver: local
     driver_opts:
       type: none
-      device: ${PWD}/srcs/requirements/mariadb/data
+      device: /home/ngastana/Escritorio/githubincep/srcs/requirements/mariadb/data
       o: bind
 networks:
   docker-network:
