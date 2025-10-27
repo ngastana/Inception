@@ -9,7 +9,8 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir -p /run/mysqld \
     && chown -R mysql:mysql /run/mysqld /var/lib/mysql \
-    && chmod +x /tmp/init.sh /tmp/create.sh
+    && chmod +x /tmp/init.sh /tmp/create.sh \
+    && cp /tmp/my.cnf /etc/mysql/my.cnf 
 
 VOLUME /var/lib/mysql
 EXPOSE 3306

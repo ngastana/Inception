@@ -18,6 +18,6 @@ mysql_install_db --user=mysql --ldata=/var/lib/mysql > /dev/null
 : ${MYSQL_PASSWORD:=}
 
 # Llamamos a create.sh para generar el SQL de inicialización
-/tmp/create.sh "$MARIADB_ROOT_PASSWORD" "$MARIADB_DATABASE" "$MARIADB_USER" "$MARIADB_PASSWORD" > /tmp/create.sql
+/tmp/create.sh "$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" "$MYSQL_USER" "$MYSQL_PASSWORD" > /tmp/create.sql
 
 echo ">>> ✅ init.sh completado, listo para arrancar MariaDB"
