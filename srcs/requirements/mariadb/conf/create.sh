@@ -1,29 +1,24 @@
 #!/bin/bash
-ROOT_PASS=$1
-DB_NAME=$2
-DB_USER=$3
-DB_PASS=$4
-
 echo ">>> 👾 Generando create.sql con parámetros recibidos" >&2
 
 cat <<EOF
 -- Configurar usuario root
-ALTER USER 'root'@'localhost' IDENTIFIED BY '${ROOT_PASS}';
+ALTER USER 'root'@'%' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
 FLUSH PRIVILEGES;
 EOF
 
 # Si hay base de datos
-if [ -n "$DB_NAME" ]; then
+if [ -n "$MYSQL_DATABASE" ]; then
 cat <<EOF
-CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\`;
+CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;
 EOF
 fi
 
 # Si hay usuario adicional
-if [ -n "$DB_USER" ] && [ -n "$DB_PASS" ]; then
+if [ -n "$MYSQL_USER" ] && [ -n "$MYSQL_PASSWORD" ]; then
 cat <<EOF
-CREATE USER IF NOT EXISTS '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASS}';
-GRANT ALL PRIVILEGES ON \`${DB_NAME}\`.* TO '${DB_USER}'@'%';
+CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
+GRANT ALL PRIVILEGES ON \`${MYSQL_DATABASE}\`.* TO '${MYSQL_USER}'@'%';
 EOF
 fi
 
