@@ -82,14 +82,15 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /home/ngastana/Escritorio/githubincep/srcs/requirements/wordpress/data
+      #device: /home/ngastana/Escritorio/githubincep/srcs/requirements/wordpress/data
+      device: ${PWD}/srcs/requirements/wordpress/data
       o: bind
   DB_Volume:
     driver: local
     driver_opts:
       type: none
-      device: /home/ngastana/Escritorio/githubincep/srcs/requirements/mariadb/data
-      #device: ${PWD}/srcs/requirements/mariadb/data
+      #device: /home/ngastana/Escritorio/githubincep/srcs/requirements/mariadb/data
+      device: ${PWD}/srcs/requirements/mariadb/data
       o: bind
 networks:
   docker-network:

@@ -13,7 +13,6 @@ RUN apt-get update \
     && cp /tmp/my.cnf /etc/mysql/my.cnf 
 
 VOLUME /var/lib/mysql
-EXPOSE 3306
 
 USER mysql
 

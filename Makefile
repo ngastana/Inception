@@ -31,7 +31,7 @@ all:
 	sudo chown -R $(USER):$(USER) srcs/requirements/wordpress/data
 	sudo chown -R 999:999 srcs/requirements/mariadb/data
 	@echo "$(YELLOW)🚀 docker-compose up --build.... 🚀$(CLR_RMV)"
-	docker-compose -f srcs/docker-compose.yml up --build
+	PWD=$(shell pwd) docker-compose -f srcs/docker-compose.yml up --build
 	@echo "$$ART"
 
 build:
