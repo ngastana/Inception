@@ -7,6 +7,10 @@ RUN apt-get update && \
     apt-get install -y curl wget netcat-openbsd tar unzip php8.2 php8.2-fpm php8.2-mysql php8.2-gd php8.2-xml php8.2-curl && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Copiar configuración de PHP-FPM
+COPY ./conf/www.conf /etc/php/8.2/fpm/pool.d/www.conf
+RUN chown root:root /etc/php/8.2/fpm/pool.d/www.conf && chmod 644 /etc/php/8.2/fpm/pool.d/www.conf
+
 # Crear carpeta para WordPress
 RUN mkdir -p /var/www/html
 WORKDIR /var/www/html

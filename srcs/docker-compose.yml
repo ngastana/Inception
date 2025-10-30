@@ -3,9 +3,7 @@ version: '3.3'
 services:
   mariadb: #software que orgaiza esos datos y permite interactuar con ellos de manera estructurada (texto autor fecha comentarios)
     container_name: mariadb
-    build: 
-      context: ./requirements/mariadb
-      dockerfile: Dockerfile
+    build: ./requirements/mariadb
     #secrets:
     #  - db_root_password
     #  - db_password
@@ -33,9 +31,7 @@ services:
     #secrets:
     #  - db_root_password
     #  - db_password
-    build: 
-      context: ./requirements/wordpress
-      dockerfile: Dockerfile
+    build: ./requirements/wordpress
     restart: always
     expose: 
      - 9000 #NGINX envia las peticiones a este puerto para que PHP-FPM las procese. NGINX escucha el puerto 80 o 442 y reenvia la peticion a PHP-FPM. SOLO ACCSIBLE DESDE OS CONTENEDORES (no desde el host)
@@ -55,9 +51,7 @@ services:
     container_name: nginx
     depends_on:
      - wordpress
-    build:
-      context: ./requirements/nginx
-      dockerfile: Dockerfile
+    build: ./requirements/nginx
     #solo root puede abrir puertos menores a 1024
     ports:
       - "443:443"
@@ -94,4 +88,3 @@ volumes:
       o: bind
 networks:
   docker-network:
-    driver: bridge #red virtual aislada
