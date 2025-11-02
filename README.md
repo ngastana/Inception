@@ -67,7 +67,7 @@ docker ps
 
 Once all containers are up and running, open your browser and go to:
 
-👉 **https://localhost** (in my case https://localhost.ngastana.42.fr
+👉 **https://localhost** (in my case https://localhost.ngastana.42.fr)
 
 You should see your **WordPress installation page** 📝
 
