@@ -69,18 +69,10 @@ Once all containers are up and running, open your browser and go to:
 
 👉 **https://localhost** (in my case https://ngastana.42.fr)
 
-You should see your **WordPress installation page** 📝
-
-If this is your first time running it:
-1. Choose your site’s language.
-2. Fill in the installation form (site name, username, password, email).
-3. Click **Install WordPress**.
-4. Log in at **https://localhost/wp-admin** using your credentials.
-
-From now on, your WordPress site is live inside Docker 🚀
+From now on, the WordPress site is live inside Docker, with one user and admin already created (you can see them in the .env, and their passwords in secrets) 🚀
 
 > 🧠 **Note:**  
 > - If you see a “connection not secure” warning, it’s normal — you’re using a self-signed SSL certificate.  
 > - Just click **“Advanced → Proceed to localhost”** to continue.  
-> - Don’t worry — it’s only on your local machine!
+> - Don’t worry — it’s only on the local machine!
 
