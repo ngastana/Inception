@@ -21,6 +21,12 @@ RUN wget https://wordpress.org/latest.zip -O /tmp/wordpress.zip && \
     mv /tmp/wordpress/* /var/www/html/ && \
     rm -rf /tmp/wordpress /tmp/wordpress.zip
 
+# 🧰 Instalar WP-CLI
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    chmod +x wp-cli.phar && \
+    mv wp-cli.phar /usr/local/bin/wp
+
+
 # Ajustar permisos
 RUN chown -R www-data:www-data /var/www/html && \
     find /var/www/html -type d -exec chmod 755 {} \; && \
