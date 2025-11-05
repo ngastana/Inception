@@ -38,15 +38,15 @@ ps:
 logs:
 	docker-compose -f srcs/docker-compose.yml logs -f
 
-clean: down
+clean:
 	@echo "$(YELLOW)🧹 Limpiando entorno de INCEPTION...$(CLR_RMV)"
 	@docker-compose -f srcs/docker-compose.yml down -v || true
 	@docker system prune -af --volumes
 	@echo "$(BLUE)🧼 Eliminando datos persistentes...$(CLR_RMV)"
-	@sudo rm -rf /home/ngastana/data/mariadb
-	@sudo rm -rf /home/ngastana/data/wordpress
+	@sudo rm -rf /home/ngastana/data/mariadb/* /home/ngastana/data/wordpress/*
 	@sudo chown -R $(USER):$(USER) /home/ngastana/data
-	@echo "$(GREEN)✅ Limpieza completa.$(CLR_RMV)"
+	@echo "$(GREEN)✅ Limpieza completa. Entorno listo para volver a construir.$(CLR_RMV)"
+
 
 fclean: clean
 	@echo "$(RED)⚠️ Eliminando TODO Docker (imágenes, volúmenes, redes)...$(CLR_RMV)"
