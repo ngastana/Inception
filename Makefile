@@ -7,32 +7,21 @@ YELLOW		:= \033[1;33m
 BLUE		:= \033[1;34m
 CYAN 		:= \033[1;36m
 
-
-define	ART
-$(RED)
-
-░██████░███    ░██   ░██████  ░██████████ ░█████████  ░██████████░██████  ░██████   ░███    ░██ 
-  ░██  ░████   ░██  ░██   ░██ ░██         ░██     ░██     ░██      ░██   ░██   ░██  ░████   ░██ 
-  ░██  ░██░██  ░██ ░██        ░██         ░██     ░██     ░██      ░██  ░██     ░██ ░██░██  ░██ 
-  ░██  ░██ ░██ ░██ ░██        ░█████████  ░█████████      ░██      ░██  ░██     ░██ ░██ ░██ ░██ 
-  ░██  ░██  ░██░██ ░██        ░██         ░██             ░██      ░██  ░██     ░██ ░██  ░██░██ 
-  ░██  ░██   ░████  ░██   ░██ ░██         ░██             ░██      ░██   ░██   ░██  ░██   ░████ 
-░██████░██    ░███   ░██████  ░██████████ ░██             ░██    ░██████  ░██████   ░██    ░███ 
-
-$(CLR_RMV)
-endef
-export	ART
+SECRETS_DIR = secrets
+SECRETS_FILES = db_root_password.txt db_password.txt wp_admin_password.txt wp_contrib_password.txt
+SECRETS_PATHS = $(addprefix $(SECRETS_DIR)/, $(SECRETS_FILES))
+DATA_DIR = /home/$(USER)/data
 
 all:
 	@echo "$(YELLOW)⌛ Creando carpetas mariadb y wordpress ⌛$(CLR_RMV)"
-	mkdir -p srcs/requirements/mariadb/data
-	mkdir -p srcs/requirements/wordpress/data
-	sudo chown -R $(USER):$(USER) srcs/requirements/mariadb/data
-	sudo chown -R $(USER):$(USER) srcs/requirements/wordpress/data
-	sudo chown -R 999:999 srcs/requirements/mariadb/data
+	sudo mkdir -p /home/ngastana/data/mariadb
+	sudo mkdir -p /home/ngastana/data/wordpress
+	sudo chown -R $(whoami):$(whoami) /home/ngastana/data
 	@echo "$(YELLOW)🚀 docker-compose up --build.... 🚀$(CLR_RMV)"
+	for secret in $(SECRETS_PATHS); do \
+		[ -f $$secret ] || touch $$secret; \
+	done
 	PWD=$(shell pwd) docker-compose -f srcs/docker-compose.yml up --build
-	@echo "$$ART"
 
 build:
 	docker-compose -f srcs/docker-compose.yml build --no-cache
@@ -51,15 +40,24 @@ logs:
 
 clean: down
 	@echo "$(YELLOW)🧹 Limpiando entorno de INCEPTION...$(CLR_RMV)"
-	docker compose srcs/docker-compose.yml down -v || true
-	docker system prune -af --volumes
-	docker volume rm srcs_WP_Volume || true
-	docker volume rm srcs_DB_Volume || true
-	sudo chown -R $(USER):$(USER) srcs/requirements/mariadb/data
-	sudo chown -R $(USER):$(USER) srcs/requirements/wordpress/data
-	sudo rm -rf srcs/requirements/mariadb/data/* 
-	sudo rm -rf srcs/requirements/wordpress/data/*
+	@docker-compose -f srcs/docker-compose.yml down -v || true
+	@docker system prune -af --volumes
+	@echo "$(BLUE)🧼 Eliminando datos persistentes...$(CLR_RMV)"
+	@sudo rm -rf /home/ngastana/data/mariadb
+	@sudo rm -rf /home/ngastana/data/wordpress
+	@sudo chown -R $(USER):$(USER) /home/ngastana/data
+	@echo "$(GREEN)✅ Limpieza completa.$(CLR_RMV)"
 
-re: clean build up
+fclean: clean
+	@echo "$(RED)⚠️ Eliminando TODO Docker (imágenes, volúmenes, redes)...$(CLR_RMV)"
+	@docker stop $(docker ps -qa) 2>/dev/null || true
+	@docker rm $(docker ps -qa) 2>/dev/null || true
+	@docker rmi -f $(docker images -qa) 2>/dev/null || true
+	@docker volume rm $(docker volume ls -q) 2>/dev/null || true
+	@docker network rm $(docker network ls -q) 2>/dev/null || true
+	@echo "$(GREEN)🔥 Entorno Docker completamente reseteado.$(CLR_RMV)"
+
+
+re: fclean build up
 
 .PHONY: all clean fclean re

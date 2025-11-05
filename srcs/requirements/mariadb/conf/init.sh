@@ -8,6 +8,9 @@ if [ -d "/var/lib/mysql/mysql" ]; then
     exit 0
 fi
 
+export MYSQL_ROOT_PASSWORD=$(cat /run/secrets/MYSQL_ROOT_PASSWORD)
+export MYSQL_PASSWORD=$(cat /run/secrets/MYSQL_PASSWORD)
+
 echo ">>> 👾 Inicializando directorio de datos..."
 mysql_install_db --user=mysql --ldata=/var/lib/mysql > /dev/null
 
