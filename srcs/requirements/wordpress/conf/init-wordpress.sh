@@ -13,11 +13,6 @@ echo "✅ Base de datos disponible!"
 
 cd /var/www/html
 
-export MYSQL_ROOT_PASSWORD=$(cat /run/secrets/MYSQL_ROOT_PASSWORD)
-export MYSQL_PASSWORD=$(cat /run/secrets/MYSQL_PASSWORD)
-export WP_ADMIN_PASSWORD=$(cat /run/secrets/WP_ADMIN_PASSWORD)
-export WP_CONTRIB_PASSWORD=$(cat /run/secrets/WP_CONTRIB_PASSWORD)
-
 # ⚙️ Crear wp-config.php si no existe
 if [ ! -f wp-config.php ]; then
   echo "⚙️ Creando archivo wp-config.php..."

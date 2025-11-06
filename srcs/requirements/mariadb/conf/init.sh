@@ -4,12 +4,9 @@ set -e
 echo ">>> 👾 Ejecutando init.sh"
 
 if [ -d "/var/lib/mysql/mysql" ]; then
-    echo ">>> 👻 Base de datos ya inicializada, saltando init.sh"
+    echo ">>> Base de datos ya inicializada, saltando init.sh"
     exit 0
 fi
-
-export MYSQL_ROOT_PASSWORD=$(cat /run/secrets/MYSQL_ROOT_PASSWORD)
-export MYSQL_PASSWORD=$(cat /run/secrets/MYSQL_PASSWORD)
 
 echo ">>> 👾 Inicializando directorio de datos..."
 mysql_install_db --user=mysql --ldata=/var/lib/mysql > /dev/null

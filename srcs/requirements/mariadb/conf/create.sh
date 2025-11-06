@@ -1,5 +1,5 @@
 #!/bin/bash
-echo ">>> 👾 Generando create.sql con parámetros recibidos" >&2
+echo ">>> Generando create.sql con parámetros recibidos" >&2
 
 # Configuración del usuario root
 cat <<EOF
