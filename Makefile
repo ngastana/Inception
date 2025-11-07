@@ -29,7 +29,7 @@ down:
 
 clean:
 	@echo "$(YELLOW)🧹 Limpiando entorno de INCEPTION...$(CLR_RMV)"
-	@docker-compose --env-file $(ENV_FILE) -f srcs/docker-compose.yml down -v || true
+	@docker-compose -f srcs/docker-compose.yml down -v || true
 	@docker system prune -af --volumes
 	@echo "$(BLUE)🧼 Eliminando datos persistentes...$(CLR_RMV)"
 	@sudo mkdir -p /home/ngastana/data/mariadb /home/ngastana/data/wordpress
