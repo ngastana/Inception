@@ -1,3 +1,0 @@
-# Ignorar archivos innecesarios para la construcción de la imagen
-*.log
-*.md
